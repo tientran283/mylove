@@ -1,31 +1,27 @@
-// You can change global variables here:
-var radius = 240; // how big of the radius
-var autoRotate = true; // auto rotate or not
-var rotateSpeed = -60; // unit: seconds/360 degrees
-var imgWidth = 120; // width of images (unit: px)
-var imgHeight = 170; // height of images (unit: px)
+var radius = 240; 
+var autoRotate = true; 
+var rotateSpeed = -60;
+var imgWidth = 120;
+var imgHeight = 170;
 
-// Link of background music - set 'null' if you dont want to play background music
 var bgMusicURL = 'https://api.soundcloud.com/tracks/143041228/stream?client_id=587aa2d384f7333a886010d5f52f302a';
-var bgMusicControls = true; // Show UI music control
+var bgMusicControls = true;
 
 
 
 // ===================== start =======================
-// animation start after 1000 miliseconds
+
 setTimeout(init, 1000);
 
 var odrag = document.getElementById('drag-container');
 var ospin = document.getElementById('spin-container');
 var aImg = ospin.getElementsByTagName('img');
 var aVid = ospin.getElementsByTagName('video');
-var aEle = [...aImg, ...aVid]; // combine 2 arrays
+var aEle = [...aImg, ...aVid];
 
-// Size of images
 ospin.style.width = imgWidth + "px";
 ospin.style.height = imgHeight + "px";
 
-// Size of ground - depend on radius
 var ground = document.getElementById('ground');
 ground.style.width = radius * 3 + "px";
 ground.style.height = radius * 3 + "px";
@@ -39,11 +35,11 @@ function init(delayTime) {
 }
 
 function applyTranform(obj) {
-  // Constrain the angle of camera (between 0 and 180)
+  
   if(tY > 180) tY = 180;
   if(tY < 0) tY = 0;
 
-  // Apply the angle
+  
   obj.style.transform = "rotateX(" + (-tY) + "deg) rotateY(" + (tX) + "deg)";
 }
 
@@ -56,13 +52,12 @@ var sX, sY, nX, nY, desX = 0,
     tX = 0,
     tY = 10;
 
-// auto spin
+
 if (autoRotate) {
   var animationName = (rotateSpeed > 0 ? 'spin' : 'spinRevert');
   ospin.style.animation = `${animationName} ${Math.abs(rotateSpeed)}s infinite linear`;
 }
 
-// add background music
 if (bgMusicURL) {
   document.getElementById('music-container').innerHTML += `
 <audio src="${bgMusicURL}" ${bgMusicControls? 'controls': ''} autoplay loop>    
@@ -71,7 +66,6 @@ if (bgMusicURL) {
 `;
 }
 
-// setup events
 document.onpointerdown = function (e) {
   clearInterval(odrag.timer);
   e = e || window.event;
@@ -149,7 +143,6 @@ if(!gl){
 //Time
 var time = 0.0;
 
-//************** Shader sources **************
 
 var vertexSource = `
 attribute vec2 position;
@@ -286,8 +279,6 @@ void main(){
 }
 `;
 
-//************** Utility functions **************
-
 window.addEventListener('resize', onWindowResize, false);
 
 function onWindowResize(){
@@ -310,8 +301,6 @@ function compileShader(shaderSource, shaderType){
   return shader;
 }
 
-//From https://codepen.io/jlfwong/pen/GqmroZ
-//Utility to complain loudly if we fail to find the attribute/uniform
 function getAttribLocation(program, name) {
   var attributeLocation = gl.getAttribLocation(program, name);
   if (attributeLocation === -1) {
@@ -328,7 +317,6 @@ function getUniformLocation(program, name) {
   return attributeLocation;
 }
 
-//************** Create shaders **************
 
 //Create vertex and fragment shaders
 var vertexShader = compileShader(vertexSource, gl.VERTEX_SHADER);
@@ -342,20 +330,19 @@ gl.linkProgram(program);
 
 gl.useProgram(program);
 
-//Set up rectangle covering entire canvas 
 var vertexData = new Float32Array([
-  -1.0,  1.0, 	// top left
-  -1.0, -1.0, 	// bottom left
-   1.0,  1.0, 	// top right
-   1.0, -1.0, 	// bottom right
+  -1.0,  1.0, 
+  -1.0, -1.0, 	
+   1.0,  1.0, 	
+   1.0, -1.0, 	
 ]);
 
-//Create vertex buffer
+
 var vertexDataBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, vertexDataBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, vertexData, gl.STATIC_DRAW);
 
-// Layout of our data in the vertex buffer
+
 var positionHandle = getAttribLocation(program, 'position');
 
 gl.enableVertexAttribArray(positionHandle);
